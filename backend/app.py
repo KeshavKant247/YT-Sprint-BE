@@ -5,6 +5,7 @@ import time
 import hashlib
 from datetime import datetime
 from functools import wraps
+from pathlib import Path
 from werkzeug.utils import secure_filename
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -12,7 +13,22 @@ import boto3
 from dotenv import load_dotenv
 from master_data import get_all_verticals, get_exams_by_vertical, get_subjects_by_vertical, get_content_subcategories
 
-load_dotenv('../.env.local')
+# Load environment variables - try multiple paths for different deployment scenarios
+
+# Try different possible locations for .env.local
+possible_env_paths = [
+    '../.env.local',
+    '.env.local',
+    os.path.join(Path(__file__).parent.parent, '.env.local'),
+]
+
+for env_path in possible_env_paths:
+    if os.path.exists(env_path):
+        load_dotenv(env_path)
+        break
+else:
+    # No .env.local found, will use environment variables directly (for Vercel)
+    load_dotenv()
 
 app = Flask(__name__)
 CORS(app, resources={
