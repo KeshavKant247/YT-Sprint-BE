@@ -135,6 +135,19 @@ def update_index(index):
     index['updated_at'] = datetime.now().isoformat()
     return put_s3_object('metadata/index.json', index)
 
+# Routes
+@app.route('/', methods=['GET'])
+def health_check():
+    """Health check endpoint"""
+    return jsonify({
+        'status': 'ok',
+        'message': 'YT Sprint API is running',
+        'endpoints': {
+            'auth': ['/api/signup', '/api/login'],
+            'main': ['/api/options', '/api/metadata', '/api/item']
+        }
+    })
+
 # User management
 def get_user(name):
     """Get user from S3"""
